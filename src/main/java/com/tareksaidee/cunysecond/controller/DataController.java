@@ -12,9 +12,9 @@ public class DataController {
 
     private static String firebase_baseUrl = "https://cunysecond.firebaseio.com/";
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public String index() throws FirebaseException, Exception {
-        Firebase firebase = new Firebase( firebase_baseUrl );
-        return firebase.get(firebase_baseUrl.concat("brooklyn_college")).getRawBody();
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        return firebase.get("brooklyn_college").getRawBody();
     }
 }
