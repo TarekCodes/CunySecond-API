@@ -13,13 +13,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DataController {
 
-    private static String firebase_baseUrl = "https://cunysecond.firebaseio.com/";
+    private static String firebase_baseUrl = "https://cunysecond.firebaseio.com";
 
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/getClasses", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get all classes from school", notes = "Get all classes from a particular school")
     public String getClasses(@RequestParam(value = "School") Schools school) throws FirebaseException, Exception,JacksonUtilityException {
         Firebase firebase = new Firebase(firebase_baseUrl);
         return firebase.get(school.getName()).getRawBody();
+    }
+
+    @RequestMapping(value = "/getAllSchools", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "Get schools with info", notes = "Get all all CUNY schools with info on each")
+    public String getAllSchools() throws FirebaseException, Exception,JacksonUtilityException {
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        return firebase.get("schools_extra").getRawBody();
+    }
+
+    @RequestMapping(value = "/getSchoolInfo", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "Get schools with info", notes = "Get all all CUNY schools with info on each")
+    public String GetSchoolInfo(@RequestParam(value = "School") Schools school) throws FirebaseException, Exception,JacksonUtilityException {
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        return firebase.addQuery("orderBy","$key").addQuery("equalTo",school.getName()).get("schools_extra").getRawBody();
     }
 
     private enum Schools {
