@@ -1,6 +1,5 @@
 package com.tareksaidee.cunysecond.controller;
 
-import com.tareksaidee.cunysecond.DTO.School;
 import io.swagger.annotations.ApiOperation;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
@@ -9,10 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @RestController
@@ -24,18 +19,6 @@ public class DataController {
     @ApiOperation(value = "Get all classes from school", notes = "Get all classes from a particular school")
     public String getClasses(@RequestParam(value = "School") Schools school) throws FirebaseException, Exception,JacksonUtilityException {
         Firebase firebase = new Firebase(firebase_baseUrl);
-        School school1 = new School();
-        school1.setCity("New York");
-        school1.setName("Borough Of Manhattan Community College");
-        school1.setPhone("2122201265");
-        school1.setStreet("199 Chambers Street");
-        school1.setZipcode("10007");
-        school1.setType("Community");
-        ArrayList<School> schools = new ArrayList<>();
-        schools.add(school1);
-        Map<String,Object> schoolMap = new HashMap<>();
-        schoolMap.put("schools_extra",schools);
-        firebase.put(schoolMap);
         return firebase.get(school.getName()).getRawBody();
     }
 
