@@ -1,9 +1,6 @@
 package com.tareksaidee.cunysecond.controller;
 
 import io.swagger.annotations.ApiOperation;
-import net.thegreshams.firebase4j.error.FirebaseException;
-import net.thegreshams.firebase4j.error.JacksonUtilityException;
-import net.thegreshams.firebase4j.service.Firebase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -24,21 +21,34 @@ public class DataController {
 
     @RequestMapping(value = "/getClasses", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get all classes from school", notes = "Get all classes from a particular school")
-    public String getClasses(@RequestParam(value = "School") Schools school) throws FirebaseException, Exception,JacksonUtilityException {
-        Firebase firebase = new Firebase(firebase_baseUrl);
-        return firebase.get(school.getName()).getRawBody();
+    public String getClasses(@RequestParam(value = "School") Schools school) throws Exception {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        URI uri = new URIBuilder()
+                .setScheme("https")
+                .setHost("cunysecond.firebaseio.com")
+                .setPath("/"+school.getName()+".json")
+                .build();
+        System.out.println(uri.toString());
+        HttpGet httpget = new HttpGet(uri);
+        return EntityUtils.toString(httpclient.execute(httpget).getEntity(), "UTF-8");
     }
 
     @RequestMapping(value = "/getAllSchools", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get schools with info", notes = "Get all all CUNY schools with info on each")
-    public String getAllSchools() throws FirebaseException, Exception,JacksonUtilityException {
-        Firebase firebase = new Firebase(firebase_baseUrl);
-        return firebase.get("schools_extra").getRawBody();
+    public String getAllSchools() throws Exception {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        URI uri = new URIBuilder()
+                .setScheme("https")
+                .setHost("cunysecond.firebaseio.com")
+                .setPath("/schools_extra.json")
+                .build();
+        HttpGet httpget = new HttpGet(uri);
+        return EntityUtils.toString(httpclient.execute(httpget).getEntity(), "UTF-8");
     }
 
     @RequestMapping(value = "/getSchoolInfo", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get schools with info", notes = "Get all all CUNY schools with info on each")
-    public String GetSchoolInfo(@RequestParam(value = "School") Schools school) throws FirebaseException, Exception,JacksonUtilityException {
+    public String GetSchoolInfo(@RequestParam(value = "School") Schools school) throws Exception {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         URI uri = new URIBuilder()
                 .setScheme("https")
