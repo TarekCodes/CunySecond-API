@@ -4,10 +4,17 @@ import io.swagger.annotations.ApiOperation;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.service.Firebase;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
 
 
 @RestController
@@ -32,8 +39,16 @@ public class DataController {
     @RequestMapping(value = "/getSchoolInfo", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get schools with info", notes = "Get all all CUNY schools with info on each")
     public String GetSchoolInfo(@RequestParam(value = "School") Schools school) throws FirebaseException, Exception,JacksonUtilityException {
-        Firebase firebase = new Firebase(firebase_baseUrl);
-        return firebase.addQuery("orderBy","$key").addQuery("equalTo",school.getName()).get("schools_extra").getRawBody();
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        URI uri = new URIBuilder()
+                .setScheme("https")
+                .setHost("cunysecond.firebaseio.com")
+                .setPath("/schools_extra.json")
+                .setParameter("orderBy", "\"$key\"")
+                .setParameter("equalTo", "\""+ school.getName() +"\"")
+                .build();
+        HttpGet httpget = new HttpGet(uri);
+        return EntityUtils.toString(httpclient.execute(httpget).getEntity(), "UTF-8");
     }
 
     private enum Schools {
